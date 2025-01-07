@@ -19,11 +19,11 @@ export const useTraders = (params: UseTraderParams) => {
         setLoading(true);
         const queryParams = new URLSearchParams();
         
-        // Handle each parameter carefully
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined && value !== '') {
-            // Special handling for numeric ranges
-            if (key === 'return_range' || key === 'sharpe_ratio_range' || key === 'max_drawdown_range') {
+            if (key === 'limit') {
+              queryParams.append('limit', value.toString());
+            } else if (key === 'return_range' || key === 'sharpe_ratio_range' || key === 'max_drawdown_range') {
               queryParams.append(key, value.toString());
             } else if (key === 'page' || key === 'page_size') {
               queryParams.append(key, value.toString());
@@ -32,8 +32,6 @@ export const useTraders = (params: UseTraderParams) => {
             }
           }
         });
-
-        console.log("------------------" + queryParams);
 
         const response = await fetch(
           `${API_BASE_URL}/product_info?${queryParams}`,

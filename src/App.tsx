@@ -11,6 +11,7 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [bannerTitle, setBannerTitle] = useState('周盈利龙虎榜');
   const [filterParams, setFilterParams] = useState<FilterParams>({
     risk_level: '',
     return_type: '',
@@ -43,8 +44,22 @@ function App() {
       ...prev,
       ...config,
       page: 1,
-      page_size: prev.page_size
+      page_size: prev.page_size,
+      limit: prev.limit
     }));
+
+    // Update banner title based on filter type
+    const titles: Record<QuickFilterType, string> = {
+      weekly: '周盈利龙虎榜',
+      monthly: '月盈利龙虎榜',
+      sharpe: '夏普严选',
+      conservative: '保守型交易者',
+      steady: '稳健型交易者',
+      aggressive: '积极型交易者',
+      progressive: '进取型交易者',
+      aum: '资产规模排行'
+    };
+    setBannerTitle(titles[type]);
   };
 
   const handleFilterApply = (filters: FilterValues) => {
@@ -83,9 +98,11 @@ function App() {
               </div>
 
               <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-gray-900 font-semibold mb-4">周盈利龙虎榜</h3>
+                <h3 className="text-gray-900 font-semibold mb-4">{bannerTitle}</h3>
                 <div className="space-y-4">
                   {traders.slice(0, 3).map((trader, index) => (
+                    
+                    <a href={trader.link}>
                     <div key={index} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-md">
                       <span className="text-orange-500 font-bold">{index + 1}</span>
                       <div>
@@ -95,6 +112,7 @@ function App() {
                         </div>
                       </div>
                     </div>
+                    </a>
                   ))}
                 </div>
               </div>
