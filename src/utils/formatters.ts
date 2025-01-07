@@ -19,3 +19,10 @@ export const getReturnColor = (value: number | null | undefined): string => {
   const numValue = Number(value);
   return numValue >= 0 ? '#f08300' : '#f6465d';
 };
+
+export const formatUniqueName = (name: string): string => {
+  if (/^\d+$/.test(name) && name.length > 6) {
+    return `****${name.slice(-6)}`;
+  }
+  return name;
+};

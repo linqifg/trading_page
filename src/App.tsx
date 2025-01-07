@@ -6,6 +6,7 @@ import { FilterDialog } from './components/FilterDialog';
 import { Pagination } from './components/Pagination';
 import { useTraders } from './hooks/useTraders';
 import { FilterValues, FilterParams, QuickFilterType, QUICK_FILTER_CONFIGS } from './types/filters';
+import { formatUniqueName } from './utils/formatters';
 
 function App() {
   const [isMobile, setIsMobile] = useState(false);
@@ -69,6 +70,7 @@ function App() {
       page: 1
     }));
     setIsFilterDialogOpen(false);
+    setBannerTitle('筛选结果');
   };
 
   const handlePageChange = (page: number, pageSize: number) => {
@@ -101,17 +103,16 @@ function App() {
                 <h3 className="text-gray-900 font-semibold mb-4">{bannerTitle}</h3>
                 <div className="space-y-4">
                   {traders.slice(0, 3).map((trader, index) => (
-                    
-                    <a href={trader.link}>
-                    <div key={index} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-md">
-                      <span className="text-orange-500 font-bold">{index + 1}</span>
-                      <div>
-                        <div className="text-gray-900 font-medium">{trader.unique_name}</div>
-                        <div className="text-orange-500">
-                          {trader.weekly_return >= 0 ? '+' : ''}{trader.weekly_return.toFixed(2)}%
+                    <a key={index} href={trader.link}>
+                      <div className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-md">
+                        <span className="text-orange-500 font-bold">{index + 1}</span>
+                        <div>
+                          <div className="text-gray-900 font-medium">{formatUniqueName(trader.unique_name)}</div>
+                          <div className="text-orange-500">
+                            {trader.weekly_return >= 0 ? '+' : ''}{trader.weekly_return.toFixed(2)}%
+                          </div>
                         </div>
                       </div>
-                    </div>
                     </a>
                   ))}
                 </div>

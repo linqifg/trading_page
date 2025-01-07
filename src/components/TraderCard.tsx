@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatUniqueName } from '../utils/formatters';
 
 interface TraderCardProps {
   trader: {
@@ -52,7 +53,7 @@ export const TraderCard: React.FC<TraderCardProps> = ({ trader }) => {
             alt="Avatar"
           />
           <div className="ml-4">
-            <div className="text-lg font-semibold">{trader.unique_name}</div>
+            <div className="text-lg font-semibold">{formatUniqueName(trader.unique_name)}</div>
             <div className="flex items-center text-sm text-gray-600 mt-1">
               <span>{trader.exchange}</span>
               <span className="mx-2">•</span>
