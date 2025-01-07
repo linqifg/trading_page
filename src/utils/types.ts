@@ -1,0 +1,1 @@
+export type NumberFormatter = (value: number | null | undefined) => string;
