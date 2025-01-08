@@ -5,7 +5,8 @@ import { FilterButtons } from '../components/FilterButtons';
 import { FilterDialog } from '../components/FilterDialog';
 import { Pagination } from '../components/Pagination';
 import { useTraders } from '../hooks/useTraders';
-import { FilterValues, FilterParams, QuickFilterType } from '../types/filters';
+import { formatUniqueName } from '../utils/formatters';
+import { FilterValues, FilterParams, QuickFilterType, QUICK_FILTER_CONFIGS } from '../types/filters';
 
 export default function Dashboard() {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -49,6 +50,16 @@ export default function Dashboard() {
       aum: '资产规模排行'
     };
     setBannerTitle(titles[type]);
+
+    // 更新筛选参数
+    const config = QUICK_FILTER_CONFIGS[type];
+    setFilterParams(prev => ({
+      ...prev,
+      ...config,
+      page: 1,
+      page_size: prev.page_size,
+      limit: prev.limit
+    }));
   };
 
   const handleFilterApply = (filters: FilterValues) => {
@@ -94,7 +105,7 @@ export default function Dashboard() {
                     <div key={index} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded-md">
                       <span className="text-[#f08300] font-bold">{index + 1}</span>
                       <div>
-                        <div className="text-gray-900 font-medium">{trader.unique_name}</div>
+                        <div className="text-gray-900 font-medium">{formatUniqueName(trader.unique_name)}</div>
                         <div className="text-[#f08300]">
                           {trader.weekly_return >= 0 ? '+' : ''}{trader.weekly_return.toFixed(2)}%
                         </div>

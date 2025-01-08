@@ -22,7 +22,7 @@ export const getReturnColor = (value: number | null | undefined): string => {
 
 export const formatUniqueName = (name: string): string => {
   if (/^\d+$/.test(name) && name.length > 6) {
-    return `****${name.slice(-6)}`;
+    return `${name.slice(-6)}`;
   }
   return name;
 };
