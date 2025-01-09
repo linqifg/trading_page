@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://54.255.48.212:3000/api';
 
 // 添加健康检查函数
 export async function checkServerHealth() {
