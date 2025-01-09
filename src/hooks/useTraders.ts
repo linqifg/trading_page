@@ -21,7 +21,8 @@ export const useTraders = (params: UseTraderParams) => {
         
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined && value !== '') {
-            if (key === 'limit') {
+            if (key === 'limit' && value !== 0) {
+              console.log("------ limit: " + value);
               queryParams.append('limit', value.toString());
             } else if (key === 'return_range' || key === 'sharpe_ratio_range' || key === 'max_drawdown_range') {
               queryParams.append(key, value.toString());
@@ -32,6 +33,8 @@ export const useTraders = (params: UseTraderParams) => {
             }
           }
         });
+
+        console.log("------" + queryParams);
 
         const response = await fetch(
           `${API_BASE_URL}/product_info?${queryParams}`,
@@ -63,7 +66,7 @@ export const useTraders = (params: UseTraderParams) => {
           setPagination({
             total: data.count,
             current: params.page || 1,
-            pageSize: params.page_size || 30
+            pageSize: params.limit || params.page_size || 30
           });
         } else {
           throw new Error(data.message || '请求失败');

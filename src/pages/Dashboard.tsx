@@ -57,8 +57,8 @@ export default function Dashboard() {
       ...prev,
       ...config,
       page: 1,
-      page_size: prev.page_size,
-      limit: prev.limit
+      page_size: config.page_size,
+      limit: config.limit
     }));
   };
 

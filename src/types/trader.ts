@@ -29,7 +29,7 @@ export interface UseTraderParams {
   max_drawdown_range?: string;
   order_by?: string;
   order?: string;
-  limit?: string;
+  limit?: number;
   page?: number;
   page_size?: number;
 }
