@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { TraderCard } from '../components/TraderCard';
 import { FilterButtons } from '../components/FilterButtons';
 import { FilterDialog } from '../components/FilterDialog';
+import { ChangePasswordDialog } from '../components/ChangePasswordDialog';
 import { Pagination } from '../components/Pagination';
 import { useTraders } from '../hooks/useTraders';
 import { formatUniqueName } from '../utils/formatters';
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [isMobile, setIsMobile] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = React.useState(false);
+  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = React.useState(false);
   const [bannerTitle, setBannerTitle] = React.useState('周盈利龙虎榜');
   const [filterParams, setFilterParams] = React.useState<FilterParams>({
     risk_level: '',
@@ -86,6 +88,7 @@ export default function Dashboard() {
         isMobile={isMobile} 
         isMenuOpen={isMenuOpen} 
         setIsMenuOpen={setIsMenuOpen}
+        onChangePassword={() => setIsChangePasswordDialogOpen(true)}
       />
 
       <main className="pt-16">
@@ -134,6 +137,12 @@ export default function Dashboard() {
             sharpe_ratio_range: '0-10',
             max_drawdown_range: '0-100'
           }}
+        />
+
+        <ChangePasswordDialog
+          isOpen={isChangePasswordDialogOpen}
+          onClose={() => setIsChangePasswordDialogOpen(false)}
+          username={sessionStorage.getItem('username') || ''}
         />
 
         {/* Trader Cards Grid */}

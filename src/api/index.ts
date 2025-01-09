@@ -1,4 +1,4 @@
-const API_URL = 'http://54.255.48.212:3000/api';
+const API_URL = 'http://localhost:3000/api';
 
 // 添加健康检查函数
 export async function checkServerHealth() {
@@ -56,6 +56,29 @@ export async function login(name: string, password: string) {
     return response.json();
   } catch (error) {
     console.error('Login error:', error);
+    throw error;
+  }
+}
+
+export async function changePassword(name: string, password: string) {
+  try {
+    const response = await fetch(`${API_URL}/change-password`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ name, password: password })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || '修改密码失败');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Change password error:', error);
     throw error;
   }
 }

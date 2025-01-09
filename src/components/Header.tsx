@@ -1,16 +1,18 @@
 import React from 'react';
-import { Menu, X} from 'lucide-react';
+import { Menu, X, Settings } from 'lucide-react';
 
 interface HeaderProps {
   isMobile: boolean;
   isMenuOpen: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
+  onChangePassword: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
   isMobile, 
   isMenuOpen, 
   setIsMenuOpen,
+  onChangePassword
 }) => {
   return (
     <header className="bg-white shadow-sm fixed w-full top-0 z-50">
@@ -31,16 +33,32 @@ export const Header: React.FC<HeaderProps> = ({
                 <a href="#" className="text-gray-500 hover:text-[#f08300] px-3 py-2">理财</a>
                 <a href="#" className="text-gray-500 hover:text-[#f08300] px-3 py-2">更多</a>
               </nav>
+              <button
+                onClick={onChangePassword}
+                className="text-gray-500 hover:text-[#f08300] p-2"
+                title="修改密码"
+              >
+                <Settings size={20} />
+              </button>
             </div>
           )}
 
           {isMobile && (
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-md text-gray-500 hover:text-[#f08300]"
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            <div className="flex items-center">
+              <button
+                onClick={onChangePassword}
+                className="text-gray-500 hover:text-[#f08300] p-2 mr-2"
+                title="修改密码"
+              >
+                <Settings size={20} />
+              </button>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 rounded-md text-gray-500 hover:text-[#f08300]"
+              >
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           )}
         </div>
       </div>

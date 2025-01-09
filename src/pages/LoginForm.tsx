@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EagleIcon } from './icons';
 import { login } from '../api';
+import { ChangePasswordDialog } from '../components/ChangePasswordDialog';
 
 export function LoginForm() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [forgotPasswordUsername, setForgotPasswordUsername] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,10 +23,20 @@ export function LoginForm() {
     try {
       await login(name, password);
       sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('username', name);
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败');
     }
+  };
+
+  const handleForgotPassword = () => {
+    if (!name) {
+      setError('请先输入用户名');
+      return;
+    }
+    setForgotPasswordUsername(name);
+    setIsChangePasswordOpen(true);
   };
 
   return (
@@ -51,7 +64,7 @@ export function LoginForm() {
               placeholder="请输入用户名"
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               密码
             </label>
@@ -62,6 +75,15 @@ export function LoginForm() {
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-[#f08300]"
               placeholder="请输入密码"
             />
+          </div>
+          <div className="mb-6 text-right">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-sm text-[#f08300] hover:text-[#d97600]"
+            >
+              忘记密码？
+            </button>
           </div>
           <button
             type="submit"
@@ -76,6 +98,12 @@ export function LoginForm() {
           </a>
         </div>
       </div>
+
+      <ChangePasswordDialog
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+        username={forgotPasswordUsername}
+      />
     </div>
   );
 }
