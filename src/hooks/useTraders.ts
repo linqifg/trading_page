@@ -16,13 +16,15 @@ export const useTraders = (params: UseTraderParams) => {
   useEffect(() => {
     const fetchTraders = async () => {
       try {
+        // 重置错误状态和加载状态
+        setError(null);
         setLoading(true);
+
         const queryParams = new URLSearchParams();
         
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined && value !== '') {
             if (key === 'limit' && value !== 0) {
-              console.log("------ limit: " + value);
               queryParams.append('limit', value.toString());
             } else if (key === 'return_range' || key === 'sharpe_ratio_range' || key === 'max_drawdown_range') {
               queryParams.append(key, value.toString());
@@ -34,8 +36,6 @@ export const useTraders = (params: UseTraderParams) => {
           }
         });
 
-        console.log("------" + queryParams);
-
         const response = await fetch(
           `${API_BASE_URL}/product_info?${queryParams}`,
           {
@@ -46,7 +46,14 @@ export const useTraders = (params: UseTraderParams) => {
         );
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          // 如果响应不是 200，尝试解析错误信息
+          try {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `请求失败 (${response.status})`);
+          } catch (e) {
+            // 如果无法解析 JSON，使用通用错误信息
+            throw new Error(`请求失败 (${response.status})`);
+          }
         }
 
         const data: TraderResponse = await response.json();
@@ -68,11 +75,16 @@ export const useTraders = (params: UseTraderParams) => {
             current: params.page || 1,
             pageSize: params.limit || params.page_size || 30
           });
+          // 成功后清除错误状态
+          setError(null);
         } else {
           throw new Error(data.message || '请求失败');
         }
       } catch (err) {
+        // 设置具体的错误信息
         setError(err instanceof Error ? err.message : '请求失败');
+        // 当发生错误时，保持之前的数据不变
+        // setTraders([]);  // 注释掉这行，不清空之前的数据
       } finally {
         setLoading(false);
       }
