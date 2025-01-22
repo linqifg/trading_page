@@ -8,6 +8,32 @@ import { Pagination } from '../components/Pagination';
 import { useTraders } from '../hooks/useTraders';
 import { formatUniqueName } from '../utils/formatters';
 import { FilterValues, FilterParams, QuickFilterType, QUICK_FILTER_CONFIGS } from '../types/filters';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+// 广告数据
+const advertisements = [
+  {
+    id: 1,
+    title: "新用户专享优惠",
+    description: "首次跟单享受0手续费",
+    pic: "/img/1.png",
+    link: "#"
+  },
+  {
+    id: 2,
+    title: "风险管理课程",
+    description: "专业交易者带你掌握风控要点",
+    pic: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80",
+    link: "#"
+  },
+  {
+    id: 3,
+    title: "高手经验分享",
+    description: "顶级交易者每周在线分享",
+    pic: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
+    link: "#"
+  }
+];
 
 export default function Dashboard() {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -15,6 +41,7 @@ export default function Dashboard() {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = React.useState(false);
   const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = React.useState(false);
   const [bannerTitle, setBannerTitle] = React.useState('周盈利龙虎榜');
+  const [currentAdIndex, setCurrentAdIndex] = React.useState(0);
   const [filterParams, setFilterParams] = React.useState<FilterParams>({
     risk_level: '',
     return_type: '',
@@ -38,6 +65,15 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // 自动轮播广告
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentAdIndex((prev) => (prev + 1) % advertisements.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const { traders, loading, error, pagination } = useTraders(filterParams);
 
   const handleFilterButtonClick = (type: QuickFilterType) => {
@@ -53,14 +89,12 @@ export default function Dashboard() {
     };
     setBannerTitle(titles[type]);
 
-    // 更新筛选参数
-    const config = QUICK_FILTER_CONFIGS[type];
     setFilterParams(prev => ({
       ...prev,
-      ...config,
+      ...QUICK_FILTER_CONFIGS[type],
       page: 1,
-      page_size: config.page_size,
-      limit: config.limit
+      page_size: QUICK_FILTER_CONFIGS[type].page_size,
+      limit: QUICK_FILTER_CONFIGS[type].limit
     }));
   };
 
@@ -82,6 +116,18 @@ export default function Dashboard() {
     }));
   };
 
+  const handlePrevAd = () => {
+    setCurrentAdIndex((prev) => 
+      prev === 0 ? advertisements.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextAd = () => {
+    setCurrentAdIndex((prev) => 
+      (prev + 1) % advertisements.length
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -97,10 +143,69 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-2">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">合约跟单交易</h1>
-                <p className="text-lg md:text-xl opacity-90">轻松复制顶级交易者策略</p>
+                {/* 广告轮播区域 - 调整高度以匹配排名表 */}
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-lg h-[calc(100%)]">
+                  <div className="overflow-hidden h-full">
+                    <div 
+                      className="transition-transform duration-500 ease-in-out flex h-full"
+                      style={{ transform: `translateX(-${currentAdIndex * 100}%)` }}
+                    >
+                      {advertisements.map((ad) => (
+                        <div 
+                          key={ad.id}
+                          className="min-w-full h-full flex flex-col"
+                        >
+                          <a 
+                            href={ad.link}
+                            className="block p-4 h-full flex flex-col"
+                          >
+                            <div className="mb-4">
+                              <h3 className="text-xl font-semibold mb-2">{ad.title}</h3>
+                              <p className="text-white/80">{ad.description}</p>
+                            </div>
+                            <div className="flex-grow relative overflow-hidden rounded-lg">
+                              <img 
+                                src={ad.pic} 
+                                alt={ad.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                              />
+                            </div>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* 导航按钮 */}
+                  <button 
+                    onClick={handlePrevAd}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={handleNextAd}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                  
+                  {/* 指示器 */}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                    {advertisements.map((_, index) => (
+                      <button
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index === currentAdIndex ? 'bg-white' : 'bg-white/50'
+                        }`}
+                        onClick={() => setCurrentAdIndex(index)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-
+              
+              {/* 排名表 */}
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-gray-900 font-semibold mb-4">{bannerTitle}</h3>
                 <div className="space-y-4">
