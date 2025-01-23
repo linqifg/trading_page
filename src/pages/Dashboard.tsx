@@ -16,21 +16,24 @@ const advertisements = [
     id: 1,
     title: "新用户专享优惠",
     description: "首次跟单享受0手续费",
-    pic: "/img/1.png",
+    picWeb: "https://images.unsplash.com/photo-1579226905180-636b76d96082?auto=format&fit=crop&w=800&q=80",
+    picMobile: "/img/favicon.ico",
     link: "#"
   },
   {
     id: 2,
     title: "风险管理课程",
     description: "专业交易者带你掌握风控要点",
-    pic: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80",
+    picWeb: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80",
+    picMobile: "/img/favicon.ico",
     link: "#"
   },
   {
     id: 3,
     title: "高手经验分享",
     description: "顶级交易者每周在线分享",
-    pic: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
+    picWeb: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
+    picMobile: "/img/favicon.ico",
     link: "#"
   }
 ];
@@ -140,11 +143,11 @@ export default function Dashboard() {
       <main className="pt-16">
         {/* Banner Section */}
         <section className="bg-gradient-to-r from-[#f08300] to-[#ffc180] text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-20">
             <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-2">
-                {/* 广告轮播区域 - 调整高度以匹配排名表 */}
-                <div className="relative bg-white/10 backdrop-blur-sm rounded-lg h-[calc(100%)]">
+                {/* 广告轮播区域 - 移动端优化 */}
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-lg md:h-[calc(100%)] h-[400px]">
                   <div className="overflow-hidden h-full">
                     <div 
                       className="transition-transform duration-500 ease-in-out flex h-full"
@@ -153,22 +156,27 @@ export default function Dashboard() {
                       {advertisements.map((ad) => (
                         <div 
                           key={ad.id}
-                          className="min-w-full h-full flex flex-col"
+                          className="min-w-full h-full"
                         >
                           <a 
                             href={ad.link}
-                            className="block p-4 h-full flex flex-col"
+                            className="block h-full relative"
                           >
-                            <div className="mb-4">
-                              <h3 className="text-xl font-semibold mb-2">{ad.title}</h3>
-                              <p className="text-white/80">{ad.description}</p>
+                            {/* 根据设备类型显示不同图片 */}
+                            <div 
+                              className="absolute inset-0 bg-center bg-cover"
+                              style={{ 
+                                backgroundImage: `url(${isMobile ? ad.picMobile : ad.picWeb})`
+                              }}
+                            >
+                              {/* 渐变遮罩 */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                             </div>
-                            <div className="flex-grow relative overflow-hidden rounded-lg">
-                              <img 
-                                src={ad.pic} 
-                                alt={ad.title}
-                                className="absolute inset-0 w-full h-full object-cover"
-                              />
+                            
+                            {/* 文字内容 - 移到底部 */}
+                            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                              <h3 className="text-2xl font-bold mb-2">{ad.title}</h3>
+                              <p className="text-white/90 text-lg">{ad.description}</p>
                             </div>
                           </a>
                         </div>
@@ -179,19 +187,19 @@ export default function Dashboard() {
                   {/* 导航按钮 */}
                   <button 
                     onClick={handlePrevAd}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button 
                     onClick={handleNextAd}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm"
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-6 h-6" />
                   </button>
                   
                   {/* 指示器 */}
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                     {advertisements.map((_, index) => (
                       <button
                         key={index}
@@ -204,7 +212,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
-              
+
               {/* 排名表 */}
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-gray-900 font-semibold mb-4">{bannerTitle}</h3>
