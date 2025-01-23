@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { EagleIcon } from './icons';
 import { login } from '../api';
 import { ChangePasswordDialog } from '../components/ChangePasswordDialog';
@@ -11,6 +11,16 @@ export function LoginForm() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [forgotPasswordUsername, setForgotPasswordUsername] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 检查是否已经登录
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' && 
+                       sessionStorage.getItem('username');
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,11 +32,15 @@ export function LoginForm() {
 
     try {
       await login(name, password);
+      // 登录成功后设置 sessionStorage
       sessionStorage.setItem('isLoggedIn', 'true');
       sessionStorage.setItem('username', name);
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败');
+      // 登录失败时清除 sessionStorage
+      sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('username');
     }
   };
 

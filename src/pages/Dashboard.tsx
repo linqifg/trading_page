@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { TraderCard } from '../components/TraderCard';
 import { FilterButtons } from '../components/FilterButtons';
@@ -39,13 +40,14 @@ const advertisements = [
 ];
 
 export default function Dashboard() {
-  const [isMobile, setIsMobile] = React.useState(false);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isFilterDialogOpen, setIsFilterDialogOpen] = React.useState(false);
-  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = React.useState(false);
-  const [bannerTitle, setBannerTitle] = React.useState('周盈利龙虎榜');
-  const [currentAdIndex, setCurrentAdIndex] = React.useState(0);
-  const [filterParams, setFilterParams] = React.useState<FilterParams>({
+  const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
+  const [bannerTitle, setBannerTitle] = useState('周盈利龙虎榜');
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [filterParams, setFilterParams] = useState<FilterParams>({
     risk_level: '',
     return_type: '',
     return_range: '',
@@ -57,7 +59,16 @@ export default function Dashboard() {
     page_size: 30
   });
 
-  React.useEffect(() => {
+  // 检查登录状态
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' && 
+                      sessionStorage.getItem('username');
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -69,7 +80,7 @@ export default function Dashboard() {
   }, []);
 
   // 自动轮播广告
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentAdIndex((prev) => (prev + 1) % advertisements.length);
     }, 5000);
@@ -146,8 +157,11 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-20">
             <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-2">
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">合约跟单交易</h1>
+                <p className="text-lg md:text-xl opacity-90 mb-6">轻松复制顶级交易者策略</p>
+                
                 {/* 广告轮播区域 - 移动端优化 */}
-                <div className="relative bg-white/10 backdrop-blur-sm rounded-lg md:h-[calc(100%)] h-[400px]">
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-lg md:h-[calc(100%-140px)] h-[400px]">
                   <div className="overflow-hidden h-full">
                     <div 
                       className="transition-transform duration-500 ease-in-out flex h-full"
